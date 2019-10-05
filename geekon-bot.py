@@ -124,10 +124,9 @@ def bot():
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                                   message='Спасибо! Попрошу начислить тебе небольшой бонус.')
 
-                                answer = requests.post(HOST + '/api/vk/feedback', {'id': users[user_id]['class_id'],
+                                requests.post(HOST + '/api/vk/feedback', {'id': users[user_id]['class_id'],
                                                                                    "mark": users[user_id]['temp_mark'],
                                                                                    "comment": answer})
-
                                 users[user_id]['state'] = "ready"
                                 save()
 
@@ -220,9 +219,6 @@ def feedback():
 
         feedback_users = json.loads(request.form.get('users'))
         key = request.form.get('key')
-
-        print(users)
-        print(feedback_users)
 
         if key != KEY:
             return "error"
