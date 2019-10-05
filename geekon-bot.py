@@ -99,7 +99,7 @@ def bot():
                                                       message='Спасибо! Попрошу начислить тебе небольшой бонус.')
 
                                     requests.post(HOST + '/api/vk/stats',
-                                                  {'id': users[user_id]['class_id'], "mark": number, "comment": ""})
+                                                  {'id': users[user_id]['class_id'], "mark": number, "comment": "", "key": KEY})
                                     users[user_id]['state'] = "ready"
                                     save()
                                 elif number == 10:
@@ -134,7 +134,7 @@ def bot():
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                                   message='Нужно ввести комментарий.')
 
-                        else:
+                        elif users[user_id]["state"] == "ready":
                             api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                               message='Лупа и Пупа пошли за зарплатой. Но новостей пока нет...')
 
