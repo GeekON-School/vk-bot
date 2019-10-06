@@ -99,7 +99,8 @@ def bot():
                                                       message='Спасибо! Попрошу начислить тебе небольшой бонус.')
 
                                     result = requests.post(HOST + '/api/vk/feedback',
-                                                  {'id': users[user_id]['class_id'], "mark": number, "comment": "", "key": KEY})
+                                                           {'id': users[user_id]['class_id'], "mark": number,
+                                                            "comment": "", "key": KEY})
                                     print(result.text)
                                     users[user_id]['state'] = "ready"
                                     save()
@@ -126,8 +127,8 @@ def bot():
                                                   message='Спасибо! Попрошу начислить тебе небольшой бонус.')
 
                                 requests.post(HOST + '/api/vk/feedback', {'id': users[user_id]['class_id'],
-                                                                                   "mark": users[user_id]['temp_mark'],
-                                                                                   "comment": answer, "key": KEY})
+                                                                          "mark": users[user_id]['temp_mark'],
+                                                                          "comment": answer, "key": KEY})
                                 users[user_id]['state'] = "ready"
                                 save()
 
@@ -223,13 +224,43 @@ def feedback():
 
         if key != KEY:
             return "error"
+        row = [{
+            "action": {
+                "type": "text",
+                "payload": f"{i}",
+                "label": f"{i}"
+            },
+            "color": "negative"
+        } for i in range(1, 6)]
+
+        row += [{
+            "action": {
+                "type": "text",
+                "payload": f"{i}",
+                "label": f"{i}"
+            },
+            "color": "primary"
+        } for i in range(6, 10)]
+        row += [{
+            "action": {
+                "type": "text",
+                "payload": "10",
+                "label": "10"
+            },
+            "color": "positive"
+        }]
+
+        keyboard = {
+            "one_time": True,
+            "buttons": [row]
+        }
 
         for user_id in users:
             if users[user_id]['class_id'] in feedback_users:
                 users[user_id]['state'] = "answering"
                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                   message='Как прошли занятия сегодня? Оцени от 1 до 10, и я пришлю тебе небольшой бонус.'.format(
-                                      message))
+                                      message), keyboard=json.dumps(keyboard))
 
                 save()
 
