@@ -214,6 +214,29 @@ def message():
         return json.dumps({'state': 'error'})
 
 
+@app.route('/notify', methods=['POST'])
+def notify():
+    try:
+        global users
+
+        message = request.form.get('message')
+        key = request.form.get('key')
+        class_id = str(request.form.get('class_id'))
+
+        if key != KEY:
+            return "{'state': 'error'}"
+
+        for user_id in users:
+            if str(users[user_id]['class_id']) == class_id:
+                api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                                  message='{}'.format(message))
+
+        return json.dumps({'state': 'ok'})
+
+    except Exception as e:
+        return json.dumps({'state': 'error'})
+
+
 @app.route('/feedback', methods=['POST'])
 def feedback():
     try:
@@ -261,8 +284,8 @@ def feedback():
             if users[user_id]['class_id'] in feedback_users:
                 users[user_id]['state'] = "answering"
                 result = api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                  message='Как прошли занятия сегодня? Оцени от 1 до 10, и я пришлю тебе небольшой бонус.'.format(
-                                      message), keyboard=json.dumps(keyboard))
+                                           message='Как прошли занятия сегодня? Оцени от 1 до 10, и я пришлю тебе небольшой бонус.'.format(
+                                               message), keyboard=json.dumps(keyboard))
 
                 save()
 
