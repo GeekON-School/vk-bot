@@ -222,6 +222,8 @@ def feedback():
         feedback_users = json.loads(request.form.get('users'))
         key = request.form.get('key')
 
+        print(feedback_users)
+
         if key != KEY:
             return "error"
         row = [{
@@ -252,13 +254,13 @@ def feedback():
 
         keyboard = {
             "one_time": True,
-            "buttons": [row]
+            "buttons": [row[:4], row[4:8], row[8:]]
         }
 
         for user_id in users:
             if users[user_id]['class_id'] in feedback_users:
                 users[user_id]['state'] = "answering"
-                api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                result = api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                   message='Как прошли занятия сегодня? Оцени от 1 до 10, и я пришлю тебе небольшой бонус.'.format(
                                       message), keyboard=json.dumps(keyboard))
 
@@ -266,7 +268,8 @@ def feedback():
 
         return json.dumps({'state': 'ok'})
 
-    except:
+    except Exception as e:
+        print(e)
         return json.dumps({'state': 'error'})
 
 
