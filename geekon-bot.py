@@ -126,7 +126,7 @@ def bot():
 
                                 requests.post(HOST + '/api/vk/feedback', {'id': users[user_id]['class_id'],
                                                                                    "mark": users[user_id]['temp_mark'],
-                                                                                   "comment": answer})
+                                                                                   "comment": answer, "key": KEY})
                                 users[user_id]['state'] = "ready"
                                 save()
 
