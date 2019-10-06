@@ -1,17 +1,30 @@
 import os
-from random import randint
+from random import randint, choice
 from flask import Flask, request
 import requests
 import vk
 from config import *
 from threading import Thread
 import json
+from datetime import datetime
 
 session = vk.Session(access_token=VK_API_ACCESS_TOKEN)
 api = vk.API(session, v=VK_API_VERSION)
 app = Flask(__name__)
 
 users = {}
+
+jokes = [
+    '😼 Лупа и Пупа пошли за зарплатой. Но новостей пока нет...',
+    '😼 Ну и запросы у вас! - сказал бот для ВК и завис...',
+    '😼 Позовите Ростислава! - Ростислав в архиве! - Так разорхивируйте его...',
+    '🦄🦄🦄',
+    '🤔 Хм, если тебе нечем заняться, можно доработать меня на http://github.com/geekon-school/vk-bot.',
+    'https://storage.geekclass.ru/images/1ffc5723-0f4d-419e-bc8e-b82ad008abd4.png',
+    '🙈 Нужно было ставить линукс...',
+    '🐷',
+    '🤹'
+]
 
 
 def save():
@@ -86,7 +99,7 @@ def bot():
                             save()
                         if users[user_id]["state"] == "activating":
                             api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                              message='Привет, {}! Для входа введи код {} на странице:\n\n https://geekclass.ru/activate'.format(
+                                              message='👋 ‍Привет, {}! Для входа введи код {} на странице:\n\n https://geekclass.ru/activate'.format(
                                                   users[user_id]['name'], users[user_id]['code']))
                         elif users[user_id]["state"] == "answering":
                             try:
@@ -96,7 +109,7 @@ def bot():
 
                                 if 6 <= number <= 9:
                                     api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                      message='Спасибо! Попрошу начислить тебе небольшой бонус.')
+                                                      message='👍👍👍 Спасибо! Попрошу начислить тебе небольшой бонус.')
 
                                     result = requests.post(HOST + '/api/vk/feedback',
                                                            {'id': users[user_id]['class_id'], "mark": number,
@@ -106,25 +119,25 @@ def bot():
                                     save()
                                 elif number == 10:
                                     api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                      message='Вау! Видимо, сегодня занятие прошло особенно круто! Напиши пару слов, что именно тебе понравилось...')
+                                                      message='😎 Вау! Видимо, сегодня занятие прошло особенно круто! Напиши пару слов, что именно тебе понравилось...')
                                     users[user_id]['state'] = "commenting"
                                     users[user_id]['temp_mark'] = number
                                     save()
                                 else:
                                     api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                      message='Хм! Кажется, все не очень весело... Расскажи, что тебе не понравилось, попробуем исправить...')
+                                                      message='😯 Хм! Кажется, все не очень весело... Расскажи, что тебе не понравилось, попробуем исправить...')
                                     users[user_id]['state'] = "commenting"
                                     users[user_id]['temp_mark'] = number
                                     save()
                             except:
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                  message='Нужно ввести число от 1 до 10.')
+                                                  message='✋ Нужно ввести число от 1 до 10.')
                         elif users[user_id]["state"] == "commenting":
                             try:
                                 answer = update['object']['body']
 
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                  message='Спасибо! Попрошу начислить тебе небольшой бонус.')
+                                                  message='👍👍👍 Спасибо! Попрошу начислить тебе небольшой бонус.')
 
                                 requests.post(HOST + '/api/vk/feedback', {'id': users[user_id]['class_id'],
                                                                           "mark": users[user_id]['temp_mark'],
@@ -134,11 +147,11 @@ def bot():
 
                             except:
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                  message='Нужно ввести комментарий.')
+                                                  message='✋ Нужно ввести комментарий.')
 
                         elif users[user_id]["state"] == "ready":
                             api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                              message='Лупа и Пупа пошли за зарплатой. Но новостей пока нет...')
+                                              message=choice(jokes))
 
             # Меняем ts для следующего запроса
             ts = longPoll['ts']
@@ -181,7 +194,7 @@ def activate():
                 save()
 
                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                  message='Активация прошла успешно.')
+                                  message='👍👍👍 Активация прошла успешно.')
 
                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                   message='Теперь я смогу присылать тебе важные новости и давать задания (конечно, за геккоины)!')
@@ -284,7 +297,7 @@ def feedback():
             if users[user_id]['class_id'] in feedback_users:
                 users[user_id]['state'] = "answering"
                 result = api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                           message='Как прошли занятия сегодня? Оцени от 1 до 10, и я пришлю тебе небольшой бонус.'.format(
+                                           message='👀 Как прошли занятия сегодня? Оцени от 1 до 10, и я пришлю тебе небольшой бонус.'.format(
                                                message), keyboard=json.dumps(keyboard))
 
                 save()
