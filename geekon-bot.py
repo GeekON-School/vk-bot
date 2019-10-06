@@ -98,7 +98,7 @@ def bot():
                                     api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                                       message='Спасибо! Попрошу начислить тебе небольшой бонус.')
 
-                                    result = requests.post(HOST + '/api/vk/stats',
+                                    result = requests.post(HOST + '/api/vk/feedback',
                                                   {'id': users[user_id]['class_id'], "mark": number, "comment": "", "key": KEY})
                                     print(result.text)
                                     users[user_id]['state'] = "ready"
