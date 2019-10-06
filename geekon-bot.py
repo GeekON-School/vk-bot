@@ -99,7 +99,7 @@ def bot():
                             save()
                         if users[user_id]["state"] == "activating":
                             api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                              message='👋 ‍Привет, {}! Для входа введи код {} на странице:\n\n https://geekclass.ru/activate'.format(
+                                              message='👋 ‍Привет, {}! Если ты уже учишься у нас, нужно связать твой аккаунт с GeekClass, для это введи код {} на странице:\n\n https://geekclass.ru/activate \n\nЕсли вы хотите задать вопрос о нашей школе, напишите сообщение Ростиславу Бородину (vk.com/roctbb).'.format(
                                                   users[user_id]['name'], users[user_id]['code']))
                         elif users[user_id]["state"] == "answering":
                             try:
