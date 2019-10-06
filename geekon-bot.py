@@ -150,7 +150,11 @@ def bot():
                                                   message='✋ Нужно ввести комментарий.')
 
                         elif users[user_id]["state"] == "ready":
-                            api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                            if 0 <= datetime.now().hour <= 7:
+                                api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                                                  message="🛌💤💤💤")
+                            else:
+                                api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                               message=choice(jokes))
 
             # Меняем ts для следующего запроса
