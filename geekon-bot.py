@@ -150,7 +150,7 @@ def bot():
                                                   message='✋ Нужно ввести комментарий.')
 
                         elif users[user_id]["state"] == "ready":
-                            if datetime.now().hour <= 4 or  datetime.now().hour > 21:
+                            if datetime.now().hour <= 4 or  datetime.now().hour >= 21:
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                                   message="🛌💤💤💤")
                             else:
