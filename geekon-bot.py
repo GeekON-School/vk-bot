@@ -253,6 +253,7 @@ def notify():
         return json.dumps({'state': 'ok'})
 
     except Exception as e:
+        print(e)
         return json.dumps({'state': 'error'})
 
 
