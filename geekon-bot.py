@@ -186,7 +186,7 @@ def activate():
 
         for user_id in users:
             if users[user_id]['code'] == int(code):
-
+                dublicate = False
                 for old_user in users:
                     if users[old_user]['class_id'] == int(class_id):
                         del users[old_user]
@@ -244,9 +244,11 @@ def notify():
             return "{'state': 'error'}"
 
         for user_id in users:
-            if str(users[user_id]['class_id']) == class_id:
-                api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                  message='{}'.format(message))
+            try:
+                if str(users[user_id]['class_id']) == class_id:
+                    api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647), message='{}'.format(message))
+            except Exception as e:
+                print(e)
 
         return json.dumps({'state': 'ok'})
 
