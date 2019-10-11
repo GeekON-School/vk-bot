@@ -227,7 +227,8 @@ def message():
 
         return json.dumps({'state': 'ok'})
 
-    except:
+    except Exception as e:
+        print(e)
         return json.dumps({'state': 'error'})
 
 
