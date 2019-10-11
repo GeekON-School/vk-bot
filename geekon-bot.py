@@ -222,8 +222,12 @@ def message():
             return "error"
 
         for user_id in users:
-            api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+            try:
+                api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                               message='{}'.format(message))
+            except Exception as e:
+                if "901" not in str(e):
+                    raise e
 
         return json.dumps({'state': 'ok'})
 
