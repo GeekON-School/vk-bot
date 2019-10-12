@@ -103,32 +103,36 @@ def bot():
                                                   users[user_id]['name'], users[user_id]['code']))
                         elif users[user_id]["state"] == "answering":
                             try:
-                                number = int(update['object']['body'])
-                                if number < 1 or number > 10:
-                                    raise Exception("wrong number")
-
-                                if 6 <= number <= 9:
-                                    api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                      message='👍👍👍 Спасибо! Попрошу начислить тебе небольшой бонус.')
-
-                                    result = requests.post(HOST + '/api/vk/feedback',
-                                                           {'id': users[user_id]['class_id'], "mark": number,
-                                                            "comment": "", "key": KEY})
-                                    print(result.text)
+                                if update['object']['body'] == "Меня не было":
                                     users[user_id]['state'] = "ready"
                                     save()
-                                elif number == 10:
-                                    api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                      message='😎 Вау! Видимо, сегодня занятие прошло особенно круто! Напиши пару слов, что именно тебе понравилось...')
-                                    users[user_id]['state'] = "commenting"
-                                    users[user_id]['temp_mark'] = number
-                                    save()
                                 else:
-                                    api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                                      message='😯 Хм! Кажется, все не очень весело... Расскажи, что тебе не понравилось, попробуем исправить...')
-                                    users[user_id]['state'] = "commenting"
-                                    users[user_id]['temp_mark'] = number
-                                    save()
+                                    number = int(update['object']['body'])
+                                    if number < 1 or number > 10:
+                                        raise Exception("wrong number")
+
+                                    if 6 <= number <= 9:
+                                        api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                                                          message='👍👍👍 Спасибо! Попрошу начислить тебе небольшой бонус.')
+
+                                        result = requests.post(HOST + '/api/vk/feedback',
+                                                               {'id': users[user_id]['class_id'], "mark": number,
+                                                                "comment": "", "key": KEY})
+                                        print(result.text)
+                                        users[user_id]['state'] = "ready"
+                                        save()
+                                    elif number == 10:
+                                        api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                                                          message='😎 Вау! Видимо, сегодня занятие прошло особенно круто! Напиши пару слов, что именно тебе понравилось...')
+                                        users[user_id]['state'] = "commenting"
+                                        users[user_id]['temp_mark'] = number
+                                        save()
+                                    else:
+                                        api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                                                          message='😯 Хм! Кажется, все не очень весело... Расскажи, что тебе не понравилось, попробуем исправить...')
+                                        users[user_id]['state'] = "commenting"
+                                        users[user_id]['temp_mark'] = number
+                                        save()
                             except:
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                                   message='✋ Нужно ввести число от 1 до 10.')
@@ -150,12 +154,12 @@ def bot():
                                                   message='✋ Нужно ввести комментарий.')
 
                         elif users[user_id]["state"] == "ready":
-                            if datetime.now().hour <= 4 or  datetime.now().hour >= 21:
+                            if datetime.now().hour <= 4 or datetime.now().hour >= 21:
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
                                                   message="🛌💤💤💤")
                             else:
                                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                                              message=choice(jokes))
+                                                  message=choice(jokes))
 
             # Меняем ts для следующего запроса
             ts = longPoll['ts']
@@ -186,7 +190,6 @@ def activate():
 
         for user_id in users:
             if users[user_id]['code'] == int(code):
-                dublicate = False
                 for old_user in users:
                     if users[old_user]['class_id'] == int(class_id):
                         del users[old_user]
@@ -224,7 +227,7 @@ def message():
         for user_id in users:
             try:
                 api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
-                              message='{}'.format(message))
+                                  message='{}'.format(message))
             except Exception as e:
                 if "901" not in str(e):
                     raise e
@@ -251,7 +254,8 @@ def notify():
         for user_id in users:
             try:
                 if str(users[user_id]['class_id']) == class_id:
-                    api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647), message='{}'.format(message))
+                    api.messages.send(user_id=user_id, random_id=randint(-2147483648, 2147483647),
+                                      message='{}'.format(message))
             except Exception as e:
                 print(e)
 
@@ -280,24 +284,16 @@ def feedback():
                 "payload": f"{i}",
                 "label": f"{i}"
             },
-            "color": "negative"
-        } for i in range(1, 6)]
+            "color": "primary"
+        } for i in range(1, 10)]
 
         row += [{
             "action": {
                 "type": "text",
-                "payload": f"{i}",
-                "label": f"{i}"
+                "payload": "-1",
+                "label": "Меня не было"
             },
             "color": "primary"
-        } for i in range(6, 10)]
-        row += [{
-            "action": {
-                "type": "text",
-                "payload": "10",
-                "label": "10"
-            },
-            "color": "positive"
         }]
 
         keyboard = {
