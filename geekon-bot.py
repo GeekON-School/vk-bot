@@ -285,7 +285,7 @@ def feedback():
                 "label": f"{i}"
             },
             "color": "primary"
-        } for i in range(1, 10)]
+        } for i in range(1, 11)]
 
         row += [{
             "action": {
