@@ -81,6 +81,7 @@ def bot():
 
             if longPoll['updates'] and len(longPoll['updates']) != 0:
                 for update in longPoll['updates']:
+                    print(update)
                     if update['type'] == 'message_new':
                         print(update)
 
