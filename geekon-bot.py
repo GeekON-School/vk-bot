@@ -163,7 +163,8 @@ def bot():
 
             # Меняем ts для следующего запроса
             ts = longPoll['ts']
-        except:
+        except Exception as e:
+            print(e)
             longPoll = api.groups.getLongPollServer(group_id=GROUP_ID)
             server, key, ts = longPoll['server'], longPoll['key'], longPoll['ts']
 
